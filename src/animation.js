@@ -2,13 +2,17 @@
  * Created by BWY on 2017/11/28.
  */
 
+var loadImage = require('./imageloader');
 //初始化状态
 var STATE_INITIAL = 0;
 //开始状态
 var STATE_START = 1;
 //停止状态
 var STATE_STOP = 2;
-
+//同步任务
+var TASK_SYNC = 0;
+//异步任务
+var TASK_ASYNC = 1;
 /**
  * 帧动画库类
  * @constructor
@@ -23,7 +27,12 @@ function Animation() {
  * @param imglist Array 图片数组
  */
 Animation.prototype.loadImage = function (imglist) {
-
+    var taskFn = function(next) {
+        //数组的深拷贝
+        loadImage(imglist.slice(),next);
+    };
+    var type = TASK_SYNC;
+    return this._add(taskFn,type);
 };
 /**
  * 添加一个异步定时任务，通过定时改变图片背景位置，实现帧动画
@@ -102,4 +111,17 @@ Animation.prototype.restart = function() {
  */
 Animation.prototype.dispose = function() {
 
+};
+/**
+ * 添加一个任务到任务队列中
+ * @param taskFn 任务方法
+ * @param type 任务类型
+ * @private
+ */
+Animation.prototype._add = function (taskFn,type) {
+    this.taskQueue.push({
+        taskFn: taskFn,
+        type: type
+    });
+    return this;
 };
