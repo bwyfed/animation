@@ -1,12 +1,22 @@
 /**
  * Created by BWY on 2017/11/28.
  */
+
+//初始化状态
+var STATE_INITIAL = 0;
+//开始状态
+var STATE_START = 1;
+//停止状态
+var STATE_STOP = 2;
+
 /**
  * 帧动画库类
  * @constructor
  */
 function Animation() {
-
+    this.taskQueue = []; //任务队列
+    this.index = 0; //当前任务的索引
+    this.state = STATE_INITIAL; //记录当前状态
 }
 /**
  * 添加一个同步任务，去预加载图片
